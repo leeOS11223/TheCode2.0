@@ -193,6 +193,10 @@ public final class main extends JavaPlugin implements Listener {
         b=Generator.world.getBlockAt(b.getX(),b.getY(),b.getZ());
         int[] boxCoords=SkyBoxWorld.getSkyBoxCoordsFromWorld(b.getX(),b.getZ());
 
+        int[] xz=SkyBoxWorld.getWorldCoordsFromSkyBox(boxCoords[0],boxCoords[1]);
+        if(SkyBoxWorld.getSkyBox(xz[0],xz[1])==null)
+            return;
+
         for(Material m:SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1]).protectedMaterials) {
             if (b.getType().equals(m)) {
                 event.setCancelled(true);
@@ -211,6 +215,9 @@ public final class main extends JavaPlugin implements Listener {
         int[] boxCoords=SkyBoxWorld.getSkyBoxCoordsFromWorld(b.getX(),b.getZ());
 
         int[] xz=SkyBoxWorld.getWorldCoordsFromSkyBox(boxCoords[0],boxCoords[1]);
+
+        if(SkyBoxWorld.getSkyBox(xz[0],xz[1])==null)
+            return;
 
         if (xz[0] == b.getX() || xz[0] + SkyBoxWorld.TileSize[0] == b.getX() || xz[1] == b.getZ() || xz[1] + SkyBoxWorld.TileSize[1] == b.getZ()) {
             if (SkyBoxWorld.getSkyBox(boxCoords[0], boxCoords[1]) == null){
@@ -344,6 +351,9 @@ public final class main extends JavaPlugin implements Listener {
         Block b=event.getBlock();
         int[] boxCoords=SkyBoxWorld.getSkyBoxCoordsFromWorld(b.getX()+1,b.getZ()+1);
         int[] xz=SkyBoxWorld.getWorldCoordsFromSkyBox(boxCoords[0],boxCoords[1]);
+
+        if(SkyBoxWorld.getSkyBox(xz[0],xz[1])==null)
+            return;
 
         if(xz[0]-1==b.getX()||xz[0]+SkyBoxWorld.TileSize[0]+1==b.getX()||xz[1]-1==b.getZ()||xz[1]+SkyBoxWorld.TileSize[1]+1==b.getZ()) {
             int x=b.getX()-xz[0];
