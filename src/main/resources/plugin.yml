@@ -1,0 +1,29 @@
+name: TheCode2
+version: ${project.version}
+main: thecode2.main
+commands:
+  basic:
+    description: This is a test command.
+    usage: /<command> [player]
+    permission: <plugin name>.basic
+    permission-message: You don't have <permission>
+  close:
+    description: This is a test command.
+    usage: /<command> [player]
+    permission: <plugin name>.close
+    permission-message: You don't have <permission>
+  open:
+    description: This is a test command.
+    usage: /<command> [player]
+    permission: <plugin name>.open
+    permission-message: You don't have <permission>
+  destroy:
+    description: This is a test command.
+    usage: /<command> [player]
+    permission: <plugin name>.destroy
+    permission-message: You don't have <permission>
+  info:
+    description: This is for getting info.
+    usage: /<command>
+    permission: <plugin name>.info
+    permission-message: You don't have <permission>
