@@ -113,25 +113,15 @@ public final class main extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("basic")) {
+        if (cmd.getName().equalsIgnoreCase("basic")&&sender.isOp()) {
             Location loc=((Player)sender).getLocation();
             int[] xz= SkyBoxWorld.getSkyBoxCoordsFromWorld(loc.getBlockX(),loc.getBlockZ());
             getServer().broadcastMessage(xz[0]+", "+xz[1]);
 
             Block block = Generator.world.getBlockAt(loc.getBlockX(),loc.getBlockY()-1,loc.getBlockZ());
 
-
             getServer().broadcastMessage(String.valueOf(block.getTypeId())+":"+String.valueOf(block.getData()));
-            //Generator.Queue(new GenerationOreVein(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(),12, Material.DIAMOND_ORE));
-            //Generator.Queue(new GenerationDoor(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(),6,5, Material.GOLD_BLOCK, Material.AIR,true));
-
-
-            //Generator.generateSkyBox(
             SkyBoxWorld.RegisterNewSkyBox(new Wasteland(xz[0],xz[1]));
-
-            //Generator.Queue(new GenerationBlock(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(), Material.SANDSTONE));
-            //Generator.Queue(new GenerationTree(loc.getBlockX(),loc.getBlockY(),loc.getBlockZ(),6, Material.LOG,Material.LEAVES));
-
             return true;
         }else if (cmd.getName().equalsIgnoreCase("close")) {
             int x=Integer.parseInt(args[0]);
@@ -152,6 +142,20 @@ public final class main extends JavaPlugin implements Listener {
             PortalHandler.setPortalState(x, z, portalID, 2);
             PortalHandler.deletePortal(x, z, portalID);
             ConfigHandler.deletePortal(portalID);
+            return true;
+        }else if (cmd.getName().equalsIgnoreCase("regenerate")&&sender.isOp()) {
+            Location loc=((Player)sender).getLocation();
+            int[] xz= SkyBoxWorld.getSkyBoxCoordsFromWorld(loc.getBlockX(),loc.getBlockZ());
+            SkyBox b=SkyBoxWorld.getSkyBox(xz[0],xz[1]);
+            SkyBox b2 = b.clone(xz[0],xz[1]);
+            //SkyBoxWorld.DestroySkyBox(b);
+            Generator.deleteSkyBoxNow(b);
+            b.GenerationObjects=b2.GenerationObjects;
+            //SkyBoxWorld.RegisterNewSkyBox(b);
+            Generator.generateSkyBox(b2);
+            for(PortalConnection p:b2.portalsConnections){
+                p.Generate();
+            }
             return true;
         }
         return false;
@@ -194,7 +198,7 @@ public final class main extends JavaPlugin implements Listener {
         int[] boxCoords=SkyBoxWorld.getSkyBoxCoordsFromWorld(b.getX(),b.getZ());
 
         int[] xz=SkyBoxWorld.getWorldCoordsFromSkyBox(boxCoords[0],boxCoords[1]);
-        if(SkyBoxWorld.getSkyBox(xz[0],xz[1])==null)
+        if(SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1])==null)
             return;
 
         for(Material m:SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1]).protectedMaterials) {
@@ -216,7 +220,7 @@ public final class main extends JavaPlugin implements Listener {
 
         int[] xz=SkyBoxWorld.getWorldCoordsFromSkyBox(boxCoords[0],boxCoords[1]);
 
-        if(SkyBoxWorld.getSkyBox(xz[0],xz[1])==null)
+        if(SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1])==null)
             return;
 
         if (xz[0] == b.getX() || xz[0] + SkyBoxWorld.TileSize[0] == b.getX() || xz[1] == b.getZ() || xz[1] + SkyBoxWorld.TileSize[1] == b.getZ()) {
@@ -352,7 +356,7 @@ public final class main extends JavaPlugin implements Listener {
         int[] boxCoords=SkyBoxWorld.getSkyBoxCoordsFromWorld(b.getX()+1,b.getZ()+1);
         int[] xz=SkyBoxWorld.getWorldCoordsFromSkyBox(boxCoords[0],boxCoords[1]);
 
-        if(SkyBoxWorld.getSkyBox(xz[0],xz[1])==null)
+        if(SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1])==null)
             return;
 
         if(xz[0]-1==b.getX()||xz[0]+SkyBoxWorld.TileSize[0]+1==b.getX()||xz[1]-1==b.getZ()||xz[1]+SkyBoxWorld.TileSize[1]+1==b.getZ()) {

@@ -34,6 +34,10 @@ public class Generator implements GenerationTarget{
         o.generate(null);
     }
 
+    public static boolean isQueueEmpty() {
+        return que.size()==0;
+    }
+
     public void queue(GenerationObject o){
         Generator.Queue(o);
     }
@@ -62,6 +66,14 @@ public class Generator implements GenerationTarget{
         int[] xz = box.getWorldCoordsFromSkyBox();
         FillBlocks(xz[0], 0, xz[1],xz[0]+ SkyBoxWorld.TileSize[0], box.maxY, xz[1]+ SkyBoxWorld.TileSize[1], Material.AIR,target);
         Queue(target);
+    }
+
+    public static void deleteSkyBoxNow(SkyBox box) {
+        GenerationCache target = new GenerationCache(SkyBoxWorld.TileSize[0],SkyBoxWorld.height,SkyBoxWorld.TileSize[1]);
+
+        int[] xz = box.getWorldCoordsFromSkyBox();
+        FillBlocks(xz[0], 0, xz[1],xz[0]+ SkyBoxWorld.TileSize[0], box.maxY, xz[1]+ SkyBoxWorld.TileSize[1], Material.AIR,target);
+        target.generate();
     }
 
     public void GenerateLayer(SkyBox box, int y, Material block,GenerationTarget target){

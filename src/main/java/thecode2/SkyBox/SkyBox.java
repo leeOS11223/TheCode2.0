@@ -28,6 +28,10 @@ public class SkyBox {
     public int wallMaterialID=0;
     public ArrayList<Material> protectedMaterials = new ArrayList<>();
 
+    public SkyBox(){
+        this.type=this.getClass().getSimpleName();
+    }
+
     public SkyBox(int x,int y){
         this.x=x;
         this.y=y;

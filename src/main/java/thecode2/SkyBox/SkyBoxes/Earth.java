@@ -48,7 +48,7 @@ public class Earth extends SkyBox {
         SkyBox b= new Earth(x,y);
         b.maxY=maxY;
         b.minY=minY;
-        b.GenerationObjects=GenerationObjects;
+        //b.GenerationObjects=GenerationObjects;
         b.portalsConnections=portalsConnections;
         b.wallMaterialID=wallMaterialID;
         return b;

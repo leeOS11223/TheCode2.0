@@ -30,7 +30,7 @@ public class ClassicDungeon extends Dungeon {
         SkyBox b= new ClassicDungeon(x,y);
         b.maxY=maxY;
         b.minY=minY;
-        b.GenerationObjects=GenerationObjects;
+        //b.GenerationObjects=GenerationObjects;
         b.portalsConnections=portalsConnections;
         return b;
     }

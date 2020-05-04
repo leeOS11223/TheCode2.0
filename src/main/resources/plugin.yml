@@ -22,6 +22,11 @@ commands:
     usage: /<command> [player]
     permission: <plugin name>.destroy
     permission-message: You don't have <permission>
+  regenerate:
+    description: This is for getting info.
+    usage: /<command>
+    permission: <plugin name>.regenerate
+    permission-message: You don't have <permission>
   info:
     description: This is for getting info.
     usage: /<command>

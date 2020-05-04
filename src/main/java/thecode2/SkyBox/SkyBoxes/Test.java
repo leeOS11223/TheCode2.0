@@ -30,7 +30,7 @@ public class Test extends SkyBox {
         SkyBox b= new Test(x,y);
         b.maxY=maxY;
         b.minY=minY;
-        b.GenerationObjects=GenerationObjects;
+       //b.GenerationObjects=GenerationObjects;
         b.portalsConnections=portalsConnections;
         b.wallMaterialID=wallMaterialID;
         return b;
