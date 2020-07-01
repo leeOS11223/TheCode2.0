@@ -32,6 +32,7 @@ import thecode2.Portals.PortalConnection;
 import thecode2.Portals.PortalHandler;
 import thecode2.SkyBox.Dungeons.ClassicDungeon.ClassicDungeon;
 import thecode2.SkyBox.Dungeons.DungeonHandler;
+import thecode2.SkyBox.Dungeons.Loot.LootGenerator;
 import thecode2.SkyBox.SkyBox;
 import thecode2.SkyBox.SkyBoxHandler;
 import thecode2.SkyBox.SkyBoxes.Earth;
@@ -81,6 +82,12 @@ public final class main extends JavaPlugin implements Listener {
         //setup dungeon stuff
         DungeonHandler.SetUp();
         getLogger().info("Done.\n");
+
+        getLogger().info("Configuring Loot Tables.");
+        //configure Loot Tables
+        LootGenerator.setup();
+        getLogger().info("Done.\n");
+
 
         getLogger().info("beginning update loop!");
         //loop

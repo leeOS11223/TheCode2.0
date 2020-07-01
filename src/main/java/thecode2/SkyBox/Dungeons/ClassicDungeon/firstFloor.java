@@ -18,6 +18,7 @@ public class firstFloor extends floor {
     public void generate(int y) {
 
         dungeon.addGenObject(new GenerationLayer(y,dungeon, Material.WATER,0));
+        dungeon.addGenObject(new GenerationDelay(new GenerationDelay(new GenerationLayer(y+4,3,dungeon,Material.COBBLESTONE,0))));
         super.generate(y);
 
         dungeon.addGenObject(new GenerationDelay(new GenerationBlock(9,y+1,1,dungeon,Material.AIR,0)));
@@ -39,5 +40,7 @@ public class firstFloor extends floor {
         dungeon.addGenObject(new GenerationDelay(new GenerationBlock(SkyBoxWorld.TileSize[1]-1,y+2,9,dungeon,Material.AIR,0)));
         dungeon.addGenObject(new GenerationDelay(new GenerationBlock(SkyBoxWorld.TileSize[1]-1,y,9,dungeon,Material.SMOOTH_BRICK,0)));
         dungeon.addGenObject(new GenerationDelay(new GenerationBlock(SkyBoxWorld.TileSize[1],y,9,dungeon,Material.SMOOTH_BRICK,0)));
+
+
     }
 }

@@ -20,7 +20,6 @@ public class normalFloor extends floor {
         rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie")));
         rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie")));
         rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie")));
-        //rooms.add(new spawnerRoom(dungeon,new Monster("test - level "+level,"zombie")));
     }
 
     @Override
@@ -38,21 +37,10 @@ public class normalFloor extends floor {
         for(int i=0;i<17;i++) {
             for(int iy=1;iy<=3;iy++) {
                 if(i!=4&&i!=12){
-                    /*dungeon.addGenObject(new GenerationDelay(new GenerationBlock(7, y+iy, 1 + i, dungeon, Material.SMOOTH_BRICK, 0)));
-                    dungeon.addGenObject(new GenerationDelay(new GenerationBlock(11, y+iy, 1 + i, dungeon, Material.SMOOTH_BRICK, 0)));
-                    dungeon.addGenObject(new GenerationDelay(new GenerationBlock(1 + i, y+iy, 7, dungeon, Material.SMOOTH_BRICK, 0)));
-                    dungeon.addGenObject(new GenerationDelay(new GenerationBlock(1 + i, y+iy, 11, dungeon, Material.SMOOTH_BRICK, 0)));*/
-
                     dungeon.addGenObject(new GenerationDelay(new GenerationBlock(1 + i, y+iy, 9, dungeon, Material.SMOOTH_BRICK, 0)));
                     dungeon.addGenObject(new GenerationDelay(new GenerationBlock(9, y+iy, 1 + i, dungeon, Material.SMOOTH_BRICK, 0)));
                 }else{
                     if(iy==3){
-                        /*dungeon.addGenObject(new GenerationDelay(new GenerationBlock(7, y+iy, 1 + i, dungeon, Material.SMOOTH_BRICK, 0)));
-                        dungeon.addGenObject(new GenerationDelay(new GenerationBlock(11, y+iy, 1 + i, dungeon, Material.SMOOTH_BRICK, 0)));
-                        dungeon.addGenObject(new GenerationDelay(new GenerationBlock(1 + i, y+iy, 7, dungeon, Material.SMOOTH_BRICK, 0)));
-                        dungeon.addGenObject(new GenerationDelay(new GenerationBlock(1 + i, y+iy, 11, dungeon, Material.SMOOTH_BRICK, 0)));*/
-
-
                         dungeon.addGenObject(new GenerationDelay(new GenerationBlock(1 + i, y+iy, 9, dungeon, Material.SMOOTH_BRICK, 0)));
                         dungeon.addGenObject(new GenerationDelay(new GenerationBlock(9, y+iy, 1 + i, dungeon, Material.SMOOTH_BRICK, 0)));
                     }
