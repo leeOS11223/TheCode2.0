@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -121,7 +122,9 @@ public final class main extends JavaPlugin implements Listener {
             Block block = Generator.world.getBlockAt(loc.getBlockX(),loc.getBlockY()-1,loc.getBlockZ());
 
             getServer().broadcastMessage(String.valueOf(block.getTypeId())+":"+String.valueOf(block.getData()));
-            SkyBoxWorld.RegisterNewSkyBox(new Wasteland(xz[0],xz[1]));
+            SkyBox w=new Wasteland(xz[0],xz[1]);
+            w.setOwner(((Player) sender).getPlayer().getUniqueId().toString());
+            SkyBoxWorld.RegisterNewSkyBox(w);
             return true;
         }else if (cmd.getName().equalsIgnoreCase("close")) {
             int x=Integer.parseInt(args[0]);
@@ -234,9 +237,20 @@ public final class main extends JavaPlugin implements Listener {
             Portal p2 = PortalHandler.CheckPortalFrame(b.getX(), b.getY(), b.getZ(), true, b.getType(), b.getData());
             Material frame=Generator.world.getBlockAt(b.getX(),b.getY(),b.getZ()).getType();
             if (p1 != null&&!PortalHandler.isOverlap(box,p1)) {//x
+                if(SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1]).getOwner()==null) {
+                    event.getPlayer().sendMessage("THIS WORLD HAS ISSUES REPORT THIS TO LEE NOW THE CODE 2 IS BROKEN!?!?! *PANIC*" +
+                            ". ERROR CODE: \"NO OWNER!?!\", WORLD LOCATION: "+boxCoords[0]+", "+boxCoords[1]);
+                    return;
+                }else if(!SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1]).getOwner().equals(event.getPlayer().getUniqueId().toString())){
+                    event.getPlayer().sendMessage("You do not own this world.");
+
+                    return;
+                }
+
                 int k[] = p1.getConnectedSkyboxXZCords();
                 SkyBox bb=SkyBoxHandler.getSkybox(frame,Material.FIRE,k[0], k[1]);
                 bb.portalsConnections=new ArrayList<>();
+                bb.setOwner(event.getPlayer().getUniqueId().toString());
 
                 if(bb==null) {
                     //make particles if bad
@@ -261,6 +275,15 @@ public final class main extends JavaPlugin implements Listener {
                     event.getPlayer().getWorld().dropItemNaturally(event.getPlayer().getLocation(), new ItemStack(b.getType(),p1.count(), (short) b.getData()));
                 }
             } else if (p2 != null&&!PortalHandler.isOverlap(box,p2)) {//z
+                if(SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1]).getOwner()==null) {
+                    event.getPlayer().sendMessage("THIS WORLD HAS ISSUES REPORT THIS TO LEE NOW THE CODE 2 IS BROKEN!?!?! *PANIC*" +
+                            ". ERROR CODE: \"NO OWNER!?!\", WORLD LOCATION: "+boxCoords[0]+", "+boxCoords[1]);
+                    return;
+                }else if(!SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1]).getOwner().equals(event.getPlayer().getUniqueId().toString())){
+                    event.getPlayer().sendMessage("You do not own this world.");
+
+                    return;
+                }
 
                 int k[] = p2.getConnectedSkyboxXZCords();
                 SkyBox bb=SkyBoxHandler.getSkybox(frame,Material.FIRE,k[0], k[1]);
@@ -294,6 +317,16 @@ public final class main extends JavaPlugin implements Listener {
         }
 
 
+    }
+
+    @EventHandler
+    public void PlayerMoveEvent(PlayerMoveEvent event){
+        Player player=event.getPlayer();
+
+        if(!player.getLocation().getWorld().equals(Generator.world)){
+            player.sendTitle("You Shouldn't Be Here...","Should you... :)",10,10,10);
+            player.setHealth(0);
+        }
     }
 
     @EventHandler

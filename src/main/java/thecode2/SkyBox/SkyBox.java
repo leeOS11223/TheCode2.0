@@ -27,6 +27,7 @@ public class SkyBox {
     public Material wallMaterial= Blocks.ColoredBlock;
     public int wallMaterialID=0;
     public ArrayList<Material> protectedMaterials = new ArrayList<>();
+    public String username;
 
     public SkyBox(){
         this.type=this.getClass().getSimpleName();
@@ -51,6 +52,7 @@ public class SkyBox {
         l= (Long) o.get("maxY");
         maxY= Math.toIntExact(l);
         type= (String) o.get("type");
+        username= (String) o.get("owner");
 
         l= (Long) o.get("wallMaterial");
         wallMaterial= Material.getMaterial(Math.toIntExact(l));
@@ -74,12 +76,20 @@ public class SkyBox {
         protectedMaterials.add(m);
     }
 
+    public String getOwner(){
+        return username;
+    }
+
+    public void setOwner(String username){
+        this.username=username;
+    }
 
     public JSONObject getJSON(){
         JSONObject o = new JSONObject();
         o.put("minY",minY);
         o.put("maxY",maxY);
         o.put("type",type);
+        o.put("owner",username);
 
         o.put("wallMaterial",wallMaterial.getId());
         o.put("wallMaterialID",wallMaterialID);
