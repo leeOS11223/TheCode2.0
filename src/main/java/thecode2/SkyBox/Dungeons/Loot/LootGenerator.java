@@ -1,7 +1,14 @@
 package thecode2.SkyBox.Dungeons.Loot;
 
 
+import com.sun.media.sound.SF2LayerRegion;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -25,7 +32,7 @@ public class LootGenerator {
         LootTable two=new LootTable(2);
             two.AddLoot(Material.COAL,20,.5f);
             two.AddLoot(Material.FEATHER,5,.25f);
-            two.AddLoot(Material.SUGAR_CANE,10,.3f);
+            two.AddLoot("reeds",10,.3f);
             two.AddLoot(Material.WATER_BUCKET,1,.2f);
             two.AddLoot(Material.CACTUS,5,.4f);
             two.AddLoot(Material.SAND,20,.5f);
@@ -80,8 +87,38 @@ public class LootGenerator {
         tables.add(six);
     }
 
-    public static void Generate(){
+    public static void Generate(Location loc,int level){
+        String data="";
 
+        for(LootTable table:tables){
+            if(table.level==level) {
+                for (Loot loot : table.lootTable) {
+                    for(int i=0;i<loot.maxNumber;i++) {
+                        double chance = Math.random();
+                        if(chance>=1-loot.chance){
+                            if(loot.itemName==null)
+                                data += "{Slot:" + (int)(Math.random()*27) + ",id:" + loot.item.name().toLowerCase() + ",Count:" + 1 + "},";
+                            else
+                                data += "{Slot:" + (int)(Math.random()*27) + ",id:" + loot.itemName + ",Count:" + 1 + "},";
+
+                        }
+                    }
+                }
+            }
+        }
+
+        /*for(int i=0;i<7;i++) {
+            int number=1;
+            String id = Material.STONE.name().toLowerCase();
+            data += "{Slot:" + i + ",id:" + id + ",Count:" + number + "},";
+        }*/
+        if(data.length()>0)
+            data=data.substring(0,data.length()-1);
+        String command="setblock "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ()+" chest 0 replace {Items:["+data+"]}";
+
+        Bukkit.getServer().dispatchCommand(
+                Bukkit.getConsoleSender(),
+                command);
     }
 
 }

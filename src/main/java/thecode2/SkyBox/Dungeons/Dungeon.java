@@ -27,6 +27,7 @@ public abstract class Dungeon extends SkyBox {
         addGenObject(new GenerationWall(maxY,this, wallBlock,blockData));
         addGenObject(new GenerationLayer(0,this, wallBlock,blockData));
         addGenObject(new GenerationInnerWall(maxY,-2,this, wallBlock,blockData));
+        addGenObject(new GenerationLayer(150,this, wallBlock,blockData));
 
         int floorGenerationHeight=1;
         for(floor f:floors){

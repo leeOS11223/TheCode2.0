@@ -6,6 +6,7 @@ import thecode2.Generator.GenerationObjects.GenerationDelay;
 import thecode2.Generator.GenerationObjects.GenerationLayer;
 import thecode2.Grid.SkyBoxWorld;
 import thecode2.SkyBox.Dungeons.*;
+import thecode2.SkyBox.Dungeons.Loot.LootGenerator;
 
 import java.util.ArrayList;
 
@@ -13,13 +14,18 @@ public class normalFloor extends floor {
 
     public ArrayList<room> rooms = new ArrayList<>();
 
-    public normalFloor(Dungeon dungeon,int level) {
+    public normalFloor(Dungeon dungeon,int level,int maxlevel) {
         super(5,dungeon,Material.SMOOTH_BRICK,0);
 
-        rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie")));
-        rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie")));
-        rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie")));
-        rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie")));
+        double r=(double)level/(double)maxlevel;
+        int lootlevel=(int)(r*(double)LootGenerator.tables.size())+1;
+
+        System.err.println(lootlevel);
+
+        rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie"),lootlevel));
+        rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie"),lootlevel));
+        rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie"),lootlevel));
+        rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie"),lootlevel));
     }
 
     @Override

@@ -19,4 +19,9 @@ public class LootTable {
         lootTable.add(l);
     }
 
+    public void AddLoot(String item, int max, float chance){
+        Loot l=new Loot(item,max,chance);
+        lootTable.add(l);
+    }
+
 }

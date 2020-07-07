@@ -32,3 +32,8 @@ commands:
     usage: /<command>
     permission: <plugin name>.info
     permission-message: You don't have <permission>
+  test:
+    description: This is for getting test.
+    usage: /<command>
+    permission: <plugin name>.info
+    permission-message: You don't have <permission>

@@ -167,6 +167,12 @@ public final class main extends JavaPlugin implements Listener {
                 p.Generate();
             }
             return true;
+
+        }else if (cmd.getName().equalsIgnoreCase("test")&&sender.isOp()) {
+
+            LootGenerator.Generate(((Player)sender).getLocation(),Integer.parseInt(args[0]));
+
+            return true;
         }
         return false;
     }
@@ -294,6 +300,8 @@ public final class main extends JavaPlugin implements Listener {
 
                 int k[] = p2.getConnectedSkyboxXZCords();
                 SkyBox bb=SkyBoxHandler.getSkybox(frame,Material.FIRE,k[0], k[1]);
+                bb.portalsConnections=new ArrayList<>();
+                bb.setOwner(event.getPlayer().getUniqueId().toString());
 
                 if(bb==null) {
                     Generator.FillEffect(b.getX(), b.getY() + 2, b.getZ(), b.getX(), b.getY() + 2, b.getZ(), 0.5f, 0, 0.5f, Particle.BARRIER);
