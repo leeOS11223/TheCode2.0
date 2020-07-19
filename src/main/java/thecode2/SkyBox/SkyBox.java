@@ -105,7 +105,8 @@ public class SkyBox {
         JSONArray portals = new JSONArray();
 
         for(PortalConnection p:portalsConnections){
-            portals.add(p.getPortalConnectionID());
+            if(p!=null)
+                portals.add(p.getPortalConnectionID());
         }
 
         o.put("portals",portals);

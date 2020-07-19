@@ -1,5 +1,6 @@
 package thecode2.Generator;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -85,6 +86,13 @@ public class Generator implements GenerationTarget{
         SetBlockNOW(x,y,z,block,0);
     }
 
+    public static void SetBlockNOW(int x, int y, int z, String block,int data) {
+        String command="setblock "+x+" "+y+" "+z+" "+block+" "+data+" replace";
+        Bukkit.getServer().dispatchCommand(
+                Bukkit.getConsoleSender(),
+                command);
+    }
+
     public static void SetBlockNOW(int x, int y, int z, Material block, int data) {
         Block currentBlock = world.getBlockAt(x,y,z);
        // currentBlock.setType(block);
@@ -106,6 +114,14 @@ public class Generator implements GenerationTarget{
             target.queue(new GenerationBlock(x, y, z, block));
         }
     }
+    public static void SetBlock(int x, int y, int z, String block,int data,GenerationTarget target) {
+        if(target==null) {
+            Queue(new GenerationBlock(x, y, z, block, data));
+        }else{
+            target.queue(new GenerationBlock(x, y, z, block, data));
+        }
+    }
+
     public static void SetBlock(int x, int y, int z, Material block,int data,GenerationTarget target) {
         if(target==null) {
             Queue(new GenerationBlock(x, y, z, block, data));

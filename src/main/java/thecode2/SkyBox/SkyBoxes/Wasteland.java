@@ -1,6 +1,7 @@
 package thecode2.SkyBox.SkyBoxes;
 
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import thecode2.Generator.GenerationObjects.*;
 import thecode2.Generator.Generator;
 import thecode2.Grid.SkyBoxWorld;
@@ -31,10 +32,13 @@ public class Wasteland extends SkyBox {
         addGenObject(new GenerationOre(40,this, Material.GRAVEL,5,12,2,6));
         addGenObject(new GenerationOre(40,this, Material.IRON_ORE,5,12,2,6));
 
+
+
         addGenObject(new GenerationDelay(new GenerationLayer(0,this, Material.BEDROCK)));
 
         addGenObject(new GenerationLayer(maxY,this, Blocks.ColoredBlock, Blocks.getBlockData("gray")));
         addGenObject(new GenerationWall(maxY,this, Blocks.ColoredBlock,Blocks.getBlockData("gray")));
+        addGenObject(new GenerationBiome(this, Biome.TAIGA_COLD));
 
     }
 

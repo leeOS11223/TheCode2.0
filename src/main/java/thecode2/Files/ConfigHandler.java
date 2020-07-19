@@ -5,6 +5,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import thecode2.Generator.GenerationObjects.GenerationBlock;
 import thecode2.Grid.SkyBoxWorld;
+import thecode2.Players.PlayerData;
+import thecode2.Players.PlayerHandler;
 import thecode2.Portals.PortalHandler;
 
 import java.io.File;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class ConfigHandler {
 
@@ -28,6 +31,19 @@ public class ConfigHandler {
             try {
                 Reader reader = new FileReader(fileEntry.toPath().toString());
                 PortalHandler.loadPortalfromJSON(fileEntry.getName().replace(".json",""),reader);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void loadPlayers(){
+        File folder = new File("./TheCode2/Players");
+
+        for (final File fileEntry : folder.listFiles()) {
+            try {
+                Reader reader = new FileReader(fileEntry.toPath().toString());
+                PlayerHandler.loadPlayerfromJSON(fileEntry.getName().replace(".json",""),reader);
             } catch (IOException e) {
                 e.printStackTrace();
             }

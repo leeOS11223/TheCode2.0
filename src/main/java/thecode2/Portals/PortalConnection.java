@@ -18,8 +18,9 @@ public class PortalConnection {
     /**
      * 0 - closed
      * 1 - open
+     * 3 - pending
      */
-    public int state =0;
+    //public int state =0;
 
     public int PortalConnectionID=-1;
 
@@ -35,8 +36,10 @@ public class PortalConnection {
 
         p1=new Portal((JSONObject) o.get("1"));
         p2=new Portal((JSONObject) o.get("2"));
-        Long l= (Long) o.get("state");
-        state= Math.toIntExact(l);
+        Long l= (Long) o.get("state1");
+        p1.state= Math.toIntExact(l);
+        l= (Long) o.get("state2");
+        p2.state= Math.toIntExact(l);
     }
 
     public JSONObject getJSON() {
@@ -44,7 +47,8 @@ public class PortalConnection {
 
         o.put("1",p1.getJSON());
         o.put("2",p2.getJSON());
-        o.put("state",state);
+        o.put("state1",p1.state);
+        o.put("state2",p2.state);
 
         return o;
     }
@@ -54,23 +58,26 @@ public class PortalConnection {
         if(p1.side.equals('n')||p1.side.equals('s')){
             rotated=false;
         }
-        if (state != 2) {
+        if (p1.state != 2) {
             int[] xyz = p1.getWorldXYZCords(true);
-            Generator.Queue(new GenerationDoor(xyz[0], xyz[1], xyz[2], p1.height, p1.length, Blocks.ColoredBlock, getFrameData(), getFillMateral(), getAirData(), rotated, false));
-            xyz = p2.getWorldXYZCords(true);
-            Generator.Queue(new GenerationDoor(xyz[0], xyz[1], xyz[2], p2.height, p2.length, Blocks.ColoredBlock, getFrameData(), getFillMateral(), getAirData(), rotated, false));
+            Generator.Queue(new GenerationDoor(xyz[0], xyz[1], xyz[2], p1.height, p1.length, Blocks.ColoredBlock, getFrameData(p1), getFillMateral(p1), getAirData(p1), rotated, false));
         }else{
             int[] xyz = p1.getWorldXYZCords(true);
             Generator.Queue(new GenerationDoor(xyz[0], xyz[1], xyz[2], p1.height, p1.length, p1.box.wallMaterial, p1.box.wallMaterialID, p1.box.wallMaterial, p1.box.wallMaterialID, rotated, false));
-            xyz = p2.getWorldXYZCords(true);
+        }
+        if (p2.state != 2) {
+            int[] xyz = p2.getWorldXYZCords(true);
+            Generator.Queue(new GenerationDoor(xyz[0], xyz[1], xyz[2], p2.height, p2.length, Blocks.ColoredBlock, getFrameData(p2), getFillMateral(p2), getAirData(p2), rotated, false));
+        }else{
+            int[] xyz = p2.getWorldXYZCords(true);
             Generator.Queue(new GenerationDoor(xyz[0], xyz[1], xyz[2], p2.height, p2.length, p2.box.wallMaterial, p2.box.wallMaterialID, p2.box.wallMaterial, p2.box.wallMaterialID, rotated, false));
-
         }
     }
 
-    private int getAirData() {
-        switch(state){
+    private int getAirData(Portal p) {
+        switch(p.state){
             case 0:
+            case 3:
                 return 4;//yellow
             case 2:
                 return 0;//white
@@ -78,19 +85,21 @@ public class PortalConnection {
         return 0;
     }
 
-    private Material getFillMateral() {
-        switch(state){
+    private Material getFillMateral(Portal p) {
+        switch(p.state){
             case 0:
+            case 3:
                 return Blocks.ColoredBlock;
         }
         return Material.AIR;
     }
 
-    public int getFrameData(){
-        switch(state){
+    public int getFrameData(Portal p){
+        switch(p.state){
             case 0:
                 return 14;//red
             case 1:
+            case 3:
                 return 5;//green
             case 2:
                 return 0;//white

@@ -16,17 +16,22 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import thecode2.Files.ConfigHandler;
+import thecode2.Generator.GenerationObjects.GenerationBlock;
 import thecode2.Generator.GenerationObjects.GenerationDoor;
 import thecode2.Generator.Generator;
 import thecode2.Grid.SkyBoxWorld;
 import thecode2.Menu.MenuHandler;
 import thecode2.Menu.Menus.DoorMenu;
+import thecode2.Modded.Blocks;
+import thecode2.Players.PlayerData;
+import thecode2.Players.PlayerHandler;
 import thecode2.Portals.Portal;
 import thecode2.Portals.PortalConnection;
 import thecode2.Portals.PortalHandler;
@@ -35,15 +40,18 @@ import thecode2.SkyBox.Dungeons.DungeonHandler;
 import thecode2.SkyBox.Dungeons.Loot.LootGenerator;
 import thecode2.SkyBox.SkyBox;
 import thecode2.SkyBox.SkyBoxHandler;
-import thecode2.SkyBox.SkyBoxes.Earth;
-import thecode2.SkyBox.SkyBoxes.Nether;
-import thecode2.SkyBox.SkyBoxes.Test;
-import thecode2.SkyBox.SkyBoxes.Wasteland;
+import thecode2.SkyBox.SkyBoxes.*;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public final class main extends JavaPlugin implements Listener {
+
+    private int count=0;
+
+    public static int RandomNumber(int min, int max) {
+        return (int) ((Math.random()*(max-min))+min);
+    }
 
     @Override
     public void onEnable() {
@@ -55,12 +63,24 @@ public final class main extends JavaPlugin implements Listener {
 
         SkyBoxHandler.registerSkyboxToPortal(new Earth(0,0), Material.SMOOTH_BRICK, Material.FIRE);
         SkyBoxHandler.registerSkyboxToPortal(new Wasteland(0,0), Material.COBBLESTONE, Material.FIRE);
-        SkyBoxHandler.registerSkyboxToPortal(new Test(0,0), Material.SANDSTONE, Material.FIRE);
+        SkyBoxHandler.registerSkyboxToPortal(new Desert(0,0), Material.SANDSTONE, Material.FIRE);
         SkyBoxHandler.registerSkyboxToPortal(new Nether(0,0), Material.OBSIDIAN, Material.FIRE);
         SkyBoxHandler.registerSkyboxToPortal(new ClassicDungeon(0,0), Material.BRICK, Material.FIRE);
+        SkyBoxHandler.registerSkyboxToPortal(null, Material.GLASS, Material.FIRE);
+        SkyBoxHandler.registerSkyboxToPortal(new Cave(0,0), Material.COAL_BLOCK, Material.FIRE);
 
         Generator.world=getServer().getWorld("world");
         getLogger().info("set generator's world to: "+ Generator.world.getName());
+
+        getLogger().info("Loading Players.");
+        //load players
+        PlayerHandler.setup();
+        getLogger().info("Done.\n");
+
+        getLogger().info("Loading Modded Blocks.");
+        //load modded blocks
+        Blocks.setup();
+        getLogger().info("Done.\n");
 
         getLogger().info("Loading Portals.");
         //load portals
@@ -104,14 +124,28 @@ public final class main extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
         //TODO save generator que to file
-
-        //save worlds
-        SkyBoxWorld.saveAll();
+        SaveAll();
     }
 
     public void update(){
         Generator.HandleQueue();
         //getServer().broadcastMessage("boop!");
+
+        count++;
+        if(count>5000){
+            count=0;
+            SaveAll();
+        }
+    }
+
+    public void SaveAll(){
+        getLogger().info("Saving The Code 2!");
+        //save worlds
+        SkyBoxWorld.saveAll();
+
+        //save players
+        PlayerHandler.saveAll();
+        getLogger().info("Done!");
     }
 
     @EventHandler
@@ -133,25 +167,55 @@ public final class main extends JavaPlugin implements Listener {
             w.setOwner(((Player) sender).getPlayer().getUniqueId().toString());
             SkyBoxWorld.RegisterNewSkyBox(w);
             return true;
+        }else if (cmd.getName().equalsIgnoreCase("startWorld")&&sender.isOp()) {
+            String name=args[0];
+
+            for(Player p:getServer().getOnlinePlayers()){
+                if(name.equals(p.getDisplayName())){
+                    Location loc=((Player)sender).getLocation();
+                    int[] xz= SkyBoxWorld.getSkyBoxCoordsFromWorld(loc.getBlockX(),loc.getBlockZ());
+
+                    SkyBox w=new Wasteland(xz[0],xz[1]);
+                    w.setOwner(p.getUniqueId().toString());
+                    SkyBoxWorld.RegisterNewSkyBox(w);
+                    PlayerHandler.players.add(new PlayerData(p.getUniqueId().toString(),xz[0],xz[1]));
+                    p.setHealth(0);
+                    p.kickPlayer("World Generating...");
+                    sender.sendMessage("Done.");
+                }
+            }
+
+            return true;
         }else if (cmd.getName().equalsIgnoreCase("close")) {
             int x=Integer.parseInt(args[0]);
             int z=Integer.parseInt(args[1]);
             int portalID=Integer.parseInt(args[2]);
-            PortalHandler.setPortalState(x,z,portalID,0);
+            PortalHandler.requestPortalState((Player)sender,x,z,portalID,0);
             return true;
         }else if (cmd.getName().equalsIgnoreCase("open")) {
             int x=Integer.parseInt(args[0]);
             int z=Integer.parseInt(args[1]);
             int portalID=Integer.parseInt(args[2]);
-            PortalHandler.setPortalState(x,z,portalID,1);
+            //PortalHandler.setPortalState(x,z,portalID,1);
+            PortalHandler.requestPortalState((Player)sender,x,z,portalID,1);
             return true;
-        }else if (cmd.getName().equalsIgnoreCase("destroy")) {
+        }else if (cmd.getName().equalsIgnoreCase("save")) {
+            if(!sender.isOp()){
+                sender.sendMessage("Dont do that! :)");
+                return true;
+            }
+            SaveAll();
+            sender.sendMessage("Saved!");
+            return true;
+        }else if (cmd.getName().equalsIgnoreCase("destroy")&&sender.isOp()) {
             int x = Integer.parseInt(args[0]);
             int z = Integer.parseInt(args[1]);
             int portalID = Integer.parseInt(args[2]);
-            PortalHandler.setPortalState(x, z, portalID, 2);
-            PortalHandler.deletePortal(x, z, portalID);
-            ConfigHandler.deletePortal(portalID);
+            if(PortalHandler.canDeletePortal(x, z, portalID,(Player)sender)) {
+                PortalHandler.setPortalState(x, z, portalID, 2);
+                PortalHandler.deletePortal(x, z, portalID);
+                ConfigHandler.deletePortal(portalID);
+            }
             return true;
         }else if (cmd.getName().equalsIgnoreCase("regenerate")&&sender.isOp()) {
             Location loc=((Player)sender).getLocation();
@@ -170,7 +234,15 @@ public final class main extends JavaPlugin implements Listener {
 
         }else if (cmd.getName().equalsIgnoreCase("test")&&sender.isOp()) {
 
-            LootGenerator.Generate(((Player)sender).getLocation(),Integer.parseInt(args[0]));
+            //LootGenerator.Generate(((Player)sender).getLocation(),Integer.parseInt(args[0]));
+
+            Location loc=((Player)sender).getLocation();
+            Material m=Material.getMaterial(Integer.valueOf(args[0]));
+            if(m==null){
+                sender.sendMessage("ERROR");
+                return true;
+            }
+            Generator.Queue(new GenerationBlock((int)loc.getX(),(int)loc.getY(),(int)loc.getZ(),m));
 
             return true;
         }
@@ -180,7 +252,7 @@ public final class main extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerInteractBlock(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (player.getItemInHand().getType() == Material.STICK) {
+        if (player.getItemInHand().getType() == Material.STICK&&player.isOp()) {
             //player.getWorld().strikeLightning(player.getTargetBlock((Set<Material>) null, 200).getLocation());
 
             Location loc=player.getLocation();
@@ -204,6 +276,12 @@ public final class main extends JavaPlugin implements Listener {
             player.sendMessage(String.valueOf(box.portalsConnections.size()));
 
            // Generator.SetBlockNOW(loc.getBlockX(),loc.getBlockY()-1,loc.getBlockZ(), Blocks.ColoredBlock,Blocks.getBlockData("red"));
+        }else
+        if (player.getItemInHand().getType() == Material.FEATHER&&player.isOp()) {
+            Location loc=player.getLocation();
+            Block block = Generator.world.getBlockAt(loc.getBlockX(),loc.getBlockY()-1,loc.getBlockZ());
+
+            player.sendTitle(block.getTypeId()+":"+String.valueOf(block.getData()),"",1,5,1);
         }
     }
 
@@ -223,6 +301,40 @@ public final class main extends JavaPlugin implements Listener {
                 return;
             }
         }
+
+        /*if(event.getBlock().getType().equals(Material.TORCH)){
+            for(int x=-10;x<10;x++){
+                for(int z=-10;z<10;z++){
+                    for(int y=-10;y<10;y++){
+                        Block b2= Generator.world.getBlockAt(b.getX()+x,b.getY()+y,b.getZ()+z);
+                        if(b2.getType().equals(Material.AIR))
+                            b2.setType(Material.FIRE);
+                    }
+                }
+            }
+        }*/
+
+       /* if(b.getType().equals(Material.TORCH)){
+            Generator.Queue(new GenerationCircle(b.getX(),b.getY(),b.getZ(),3,Material.REDSTONE_TORCH_ON));
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Generator.Queue(new GenerationPool(b.getX(),b.getY(),b.getZ(),7,Material.WATER,Material.AIR));
+        }*/
+    }
+
+    @EventHandler
+    public void onPlayerSpawn(PlayerRespawnEvent event){
+        Player player=event.getPlayer();
+        PlayerData pd=PlayerHandler.getPlayer(player);
+        Point sl=pd.SpawnBox;
+        SkyBox skybox=SkyBoxWorld.getSkyBox(sl.x,sl.y);
+
+        int xz[]=skybox.getWorldCoordsFromSkyBox();
+
+        event.setRespawnLocation(new Location(Generator.world,xz[0]+SkyBoxWorld.TileSize[0]/2,SkyBoxWorld.spawnHeight,xz[1]+SkyBoxWorld.TileSize[1]/2));
     }
 
     @EventHandler
@@ -260,8 +372,20 @@ public final class main extends JavaPlugin implements Listener {
                     return;
                 }
 
+                if(SkyBoxWorld.getSkyBox(p1.getConnectedSkyboxXZCords()[0],p1.getConnectedSkyboxXZCords()[1])!=null&&!b.getType().equals(Material.GLASS)){
+                    return;
+                }
+
                 int k[] = p1.getConnectedSkyboxXZCords();
                 SkyBox bb=SkyBoxHandler.getSkybox(frame,Material.FIRE,k[0], k[1]);
+                if(bb==null){
+                    if(SkyBoxWorld.getSkyBox(p1.getConnectedSkyboxXZCords()[0],p1.getConnectedSkyboxXZCords()[1])==null)
+                        return;
+                    setUpNewPortalWorldData(boxCoords, p1);
+                    int xyz[] = p1.getWorldXYZCords(false);
+                    Generator.Generate(new GenerationDoor(xyz[0], xyz[1], xyz[2], p1.height, p1.length, Material.AIR, null, false, true));
+                    return;
+                }
                 bb.portalsConnections=new ArrayList<>();
                 bb.setOwner(event.getPlayer().getUniqueId().toString());
 
@@ -298,8 +422,20 @@ public final class main extends JavaPlugin implements Listener {
                     return;
                 }
 
+                if(SkyBoxWorld.getSkyBox(p2.getConnectedSkyboxXZCords()[0],p2.getConnectedSkyboxXZCords()[1])!=null&&!b.getType().equals(Material.GLASS)){
+                    return;
+                }
+
                 int k[] = p2.getConnectedSkyboxXZCords();
                 SkyBox bb=SkyBoxHandler.getSkybox(frame,Material.FIRE,k[0], k[1]);
+                if(bb==null){
+                    if(SkyBoxWorld.getSkyBox(p2.getConnectedSkyboxXZCords()[0],p2.getConnectedSkyboxXZCords()[1])==null)
+                        return;
+                    setUpNewPortalWorldData(boxCoords, p2);
+                    int xyz[] = p2.getWorldXYZCords(false);
+                    Generator.Generate(new GenerationDoor(xyz[0], xyz[1], xyz[2], p2.height, p2.length, Material.AIR, null, true, true));
+                    return;
+                }
                 bb.portalsConnections=new ArrayList<>();
                 bb.setOwner(event.getPlayer().getUniqueId().toString());
 
@@ -339,8 +475,14 @@ public final class main extends JavaPlugin implements Listener {
         Player player=event.getPlayer();
 
         if(!player.getLocation().getWorld().equals(Generator.world)){
-            player.sendTitle("You Shouldn't Be Here...","Should you... :)",10,10,10);
-            player.setHealth(0);
+            player.sendTitle("You Shouldn't Be Here...","Should you... :)",10,60,10);
+            //player.setHealth(0);
+            PlayerData pd=PlayerHandler.getPlayer(player);
+            Point sl=pd.SpawnBox;
+            SkyBox skybox=SkyBoxWorld.getSkyBox(sl.x,sl.y);
+
+            int xz[]=skybox.getWorldCoordsFromSkyBox();
+            player.teleport(new Location(Generator.world,xz[0]+SkyBoxWorld.TileSize[0]/2,SkyBoxWorld.spawnHeight,xz[1]+SkyBoxWorld.TileSize[1]/2));
         }
     }
 
@@ -394,7 +536,9 @@ public final class main extends JavaPlugin implements Listener {
         }
         connect.Generate();
         //todo find some way to run this after skybox is fully generated, perhaps pregenerate then generate all that at once.
-        connect.state=1;
+        connect.p1.state=0;
+        connect.p2.state=0;
+
         connect.Generate();
     }
 
@@ -430,10 +574,10 @@ public final class main extends JavaPlugin implements Listener {
             PortalConnection p1 = PortalHandler.getOverlappingPortal(SkyBoxWorld.getSkyBox(boxCoords[0], boxCoords[1]), new Point(b.getX() - xz[0], b.getY()), side, 0);
             PortalConnection p2 = PortalHandler.getOverlappingPortal(SkyBoxWorld.getSkyBox(boxCoords[0],boxCoords[1]),new Point(b.getZ()-xz[1],b.getY()),side,0);
             if(p1!=null) {
-                MenuHandler.sendMenu(event.getPlayer(),new DoorMenu(p1.state==1,p1.p1.box,p1.PortalConnectionID));
+                MenuHandler.sendMenu(event.getPlayer(),new DoorMenu(p1.p1.box,p1.PortalConnectionID));
             }
             if(p2!=null) {
-                MenuHandler.sendMenu(event.getPlayer(),new DoorMenu(p2.state==1,p2.p1.box,p2.PortalConnectionID));
+                MenuHandler.sendMenu(event.getPlayer(),new DoorMenu(p2.p1.box,p2.PortalConnectionID));
             }
 
             event.setCancelled(true);

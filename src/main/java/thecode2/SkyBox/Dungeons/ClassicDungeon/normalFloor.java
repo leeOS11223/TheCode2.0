@@ -20,8 +20,6 @@ public class normalFloor extends floor {
         double r=(double)level/(double)maxlevel;
         int lootlevel=(int)(r*(double)LootGenerator.tables.size())+1;
 
-        System.err.println(lootlevel);
-
         rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie"),lootlevel));
         rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie"),lootlevel));
         rooms.add(new spawnerRoom(dungeon, DungeonHandler.GetFairMonster(level,3,"zombie"),lootlevel));

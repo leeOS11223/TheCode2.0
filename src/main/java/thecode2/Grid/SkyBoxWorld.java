@@ -5,7 +5,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import thecode2.Generator.Generator;
+import thecode2.Players.PlayerData;
 import thecode2.Portals.PortalConnection;
+import thecode2.Portals.PortalHandler;
 import thecode2.SkyBox.SkyBox;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 
 public class SkyBoxWorld {
 
+    public static int spawnHeight=51;
     private static ArrayList<SkyBox> boxes = new ArrayList<SkyBox>();
 
     public static final int[] TileSize = {18,18};//length of 19

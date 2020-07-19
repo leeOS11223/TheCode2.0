@@ -1,15 +1,8 @@
 package thecode2.SkyBox.Dungeons.Loot;
 
-
-import com.sun.media.sound.SF2LayerRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 

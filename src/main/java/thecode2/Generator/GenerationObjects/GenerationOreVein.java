@@ -8,6 +8,7 @@ import thecode2.Grid.SkyBoxWorld;
 import thecode2.SkyBox.SkyBox;
 
 public class GenerationOreVein extends GenerationObject {
+    private String blockName;
     private Material ore;
     private int data=0;
     private int size;
@@ -68,6 +69,16 @@ public class GenerationOreVein extends GenerationObject {
         this.data=data;
     }
 
+    public GenerationOreVein(int x, int y, int z, int size, String blockName, int data, int maxy,SkyBox restristionBox,int restrictedHeight) {
+        super(x, y, z);
+        this.blockName=blockName;
+        this.size=size;
+        this.data=data;
+        this.maxY=maxy;
+        this.restristionBox=restristionBox;
+        this.restristionHeight=restrictedHeight;
+    }
+
     @Override
     public void generate(GenerationTarget target){
         String direction ="";
@@ -89,7 +100,10 @@ public class GenerationOreVein extends GenerationObject {
                     return;
             }
 
-            Generator.SetBlock(x+xoff,y+yoff,z+zoff,ore,data,target);
+            if(blockName!=null)
+                Generator.SetBlock(x+xoff,y+yoff,z+zoff,blockName,data,target);
+            else
+                Generator.SetBlock(x+xoff,y+yoff,z+zoff,ore,data,target);
             if(Math.round(Math.random())==0){
                 change=-1;
             }else{

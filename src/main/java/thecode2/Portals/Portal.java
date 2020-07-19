@@ -13,6 +13,13 @@ public class Portal {
     private int BoxX,BoxY;
     public Character side;
 
+    /**
+     * 0 - closed
+     * 1 - open
+     * 2 - pending
+     */
+    public int state =0;
+
     public Portal(SkyBox box,Character side,int x,int y,int length,int height){
         this.box=box;
         this.side=side;

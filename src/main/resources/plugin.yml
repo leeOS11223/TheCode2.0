@@ -27,6 +27,16 @@ commands:
     usage: /<command>
     permission: <plugin name>.regenerate
     permission-message: You don't have <permission>
+  save:
+    description: This is for saving.
+    usage: /<command>
+    permission: <plugin name>.save
+    permission-message: You don't have <permission>
+  startWorld:
+    description: This is for starting a new world.
+    usage: /<command>
+    permission: <plugin name>.startWorld
+    permission-message: You don't have <permission>
   info:
     description: This is for getting info.
     usage: /<command>

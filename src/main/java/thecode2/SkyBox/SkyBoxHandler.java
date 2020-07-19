@@ -1,8 +1,6 @@
 package thecode2.SkyBox;
 
 import org.bukkit.Material;
-import thecode2.SkyBox.SkyBoxes.Earth;
-import thecode2.SkyBox.SkyBoxes.Test;
 
 import java.util.ArrayList;
 

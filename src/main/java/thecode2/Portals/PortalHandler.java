@@ -1,11 +1,13 @@
 package thecode2.Portals;
 
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import thecode2.Generator.Generator;
 import thecode2.Grid.SkyBoxWorld;
+import thecode2.Players.PlayerData;
 import thecode2.SkyBox.SkyBox;
 
 import java.awt.*;
@@ -40,13 +42,13 @@ public class PortalHandler {
 
     public static boolean isOverlap(SkyBox box, Point p, Character side){
         for(PortalConnection pc:box.portalsConnections){
-            if((pc.p1.side==side&&pc.p1.box==box)&&pc.state==1) {
+            if((pc.p1.side==side&&pc.p1.box==box)&&(pc.p1.state==1&&pc.p2.state==1)) {
                 if (overlapping(pc.p1, p,1)) {
                     return true;
                 }
             }
             if(pc.p2.side==side&&pc.p2.box==box) {
-                if (overlapping(pc.p1, p,1)&&pc.state==1) {
+                if (overlapping(pc.p1, p,1)&&(pc.p1.state==1&&pc.p2.state==1)) {
                     return true;
                 }
             }
@@ -280,7 +282,32 @@ public class PortalHandler {
         ArrayList<PortalConnection> portals=SkyBoxWorld.getSkyBox(BoxX,BoxZ).portalsConnections;
         for(PortalConnection p:portals){
             if(p.PortalConnectionID==portalID){
-                p.state=state;
+                p.p1.state=state;
+                p.p2.state=state;
+                p.Generate();
+            }
+        }
+    }
+
+    public static void requestPortalState(Player player, int BoxX, int BoxZ, int portalID, int state){
+        ArrayList<PortalConnection> portals=SkyBoxWorld.getSkyBox(BoxX,BoxZ).portalsConnections;
+        for(PortalConnection p:portals){
+            if(p.PortalConnectionID==portalID){
+                if(player.getUniqueId().toString().equals(p.p1.box.getOwner()))
+                    if(state!=0&&!player.getUniqueId().toString().equals(p.p2.box.getOwner()))
+                        p.p1.state=3;
+                    else
+                        p.p1.state=state;
+                if(player.getUniqueId().toString().equals(p.p2.box.getOwner()))
+                    if(state!=0&&!player.getUniqueId().toString().equals(p.p1.box.getOwner()))
+                        p.p2.state=3;
+                    else
+                        p.p2.state=state;
+
+                 if(p.p1.state==3&&p.p2.state==3){
+                     p.p1.state=1;
+                     p.p2.state=1;
+                 }
                 p.Generate();
             }
         }
@@ -290,7 +317,8 @@ public class PortalHandler {
         ArrayList<PortalConnection> portals=box.portalsConnections;
         for(PortalConnection p:portals){
             if(p.PortalConnectionID==portalID){
-                p.state=state;
+                p.p1.state=state;
+                p.p2.state=state;
                 p.Generate();
             }
         }
@@ -305,5 +333,16 @@ public class PortalHandler {
                 return;
             }
         }
+    }
+
+    public static boolean canDeletePortal(int BoxX,int BoxZ, int portalID, Player player) {
+        ArrayList<PortalConnection> portals=SkyBoxWorld.getSkyBox(BoxX,BoxZ).portalsConnections;
+        for(PortalConnection p:portals) {
+            if (p.PortalConnectionID == portalID) {
+                if(p.p1.box.getOwner().equals(player.getUniqueId().toString())||p.p2.box.getOwner().equals(player.getUniqueId().toString()))
+                    return true;
+            }
+        }
+        return false;
     }
 }

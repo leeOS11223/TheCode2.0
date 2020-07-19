@@ -16,8 +16,11 @@ public class SkyBoxLink {
     }
 
     public SkyBox getNewSkybox(int x,int y){
-        SkyBox b=skyboxTemplate.clone(x,y);
-        return b;
+        if(skyboxTemplate!=null) {
+            SkyBox b = skyboxTemplate.clone(x, y);
+            return b;
+        }
+        return null;
     }
 
 }

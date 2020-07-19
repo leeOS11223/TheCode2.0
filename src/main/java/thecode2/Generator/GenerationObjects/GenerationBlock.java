@@ -8,6 +8,7 @@ import thecode2.Grid.SkyBoxWorld;
 import thecode2.SkyBox.SkyBox;
 
 public class GenerationBlock extends GenerationObject {
+    private String blockName;
     private Material block;
     private int data;
     private SkyBox box=null;
@@ -38,6 +39,12 @@ public class GenerationBlock extends GenerationObject {
         this.box=box;
     }
 
+    public GenerationBlock(int x, int y, int z, String blockName,int data) {
+        super(x, y, z);
+        this.blockName=blockName;
+        this.data=data;
+    }
+
     @Override
     public void generate(GenerationTarget target){
         //TODO skybox restriction mode, ON by default
@@ -48,6 +55,9 @@ public class GenerationBlock extends GenerationObject {
                 return;
             }
         }
-        Generator.SetBlockNOW(x,y,z,block,data);
+        if(blockName!=null)
+            Generator.SetBlockNOW(x,y,z,blockName,data);
+         else
+            Generator.SetBlockNOW(x,y,z,block,data);
     }
 }

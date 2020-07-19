@@ -1,11 +1,13 @@
 package thecode2.SkyBox.SkyBoxes;
 
 import org.bukkit.Material;
+import org.bukkit.block.Biome;
 import thecode2.Generator.GenerationObjects.*;
 import thecode2.Generator.Generator;
 import thecode2.Grid.SkyBoxWorld;
 import thecode2.Modded.Blocks;
 import thecode2.SkyBox.SkyBox;
+import thecode2.main;
 
 public class Earth extends SkyBox {
 
@@ -31,15 +33,31 @@ public class Earth extends SkyBox {
         addGenObject(new GenerationOre(48,this, Material.COAL_ORE,5,12,20,22));
         addGenObject(new GenerationOre(40,this, Material.IRON_ORE,5,12,15,17));
         addGenObject(new GenerationOre(32,this, Material.GOLD_ORE,5,12,6,15));
-        //addGenObject(new GenerationOre(16,this, Material.REDSTONE_ORE,5,12,6,20));
-        //addGenObject(new GenerationOre(31,this, Material.LAPIS_ORE,3,12,6,20));
-        //addGenObject(new GenerationOre(16,this, Material.DIAMOND_ORE,1,8,0,6));
-        //addGenObject(new GenerationOre(32,this, Material.EMERALD_ORE,1,1,0,5));
+
+        addGenObject(new GenerationOre(48,this, Blocks.getMaterial("osmium"),5,12,-30,56));
+        addGenObject(new GenerationOre(48,this, Blocks.getMaterial("copper"),Blocks.getMeta("copper"),5,12,-30,56));
+        addGenObject(new GenerationOre(48,this, Blocks.getMaterial("tin"),Blocks.getMeta("tin"),5,12,-30,56));
+
+        addGenObject(new GenerationOre(48,this, "projectred-exploration:ore",0,2,7,-30,56));
+        addGenObject(new GenerationOre(48,this, "projectred-exploration:ore",1,2,7,-30,56));
+        addGenObject(new GenerationOre(48,this, "projectred-exploration:ore",2,2,7,-30,56));
+
+        int level=main.RandomNumber(27,40);
+
+        for(int i=0;main.RandomNumber(-3,4)>i;i++)
+            Generator.Queue(new GenerationDelay(new GenerationPool(main.RandomNumber(8,SkyBoxWorld.TileSize[0]-8),level,main.RandomNumber(8,SkyBoxWorld.TileSize[1]-8),this,7,Material.WATER,Material.AIR)));
+
+        level=main.RandomNumber(8,20);
+
+        for(int i=0;main.RandomNumber(-3,4)>i;i++)
+            Generator.Queue(new GenerationDelay(new GenerationPool(main.RandomNumber(8,SkyBoxWorld.TileSize[0]-8),level,main.RandomNumber(8,SkyBoxWorld.TileSize[1]-8),this,7,Material.LAVA,Material.AIR)));
+
 
         addGenObject(new GenerationDelay(new GenerationLayer(0,this, Material.BEDROCK)));
 
         addGenObject(new GenerationLayer(maxY,this, Blocks.ColoredTransparentBlock, Blocks.getBlockData("light-blue")));
         addGenObject(new GenerationWall(maxY,this, Blocks.ColoredBlock,Blocks.getBlockData("light-blue")));
+        addGenObject(new GenerationBiome(this, Biome.PLAINS));
 
     }
 

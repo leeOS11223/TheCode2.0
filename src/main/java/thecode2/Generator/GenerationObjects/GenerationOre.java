@@ -5,9 +5,13 @@ import thecode2.Generator.GenerationObject;
 import thecode2.Generator.GenerationTarget;
 import thecode2.Generator.Generator;
 import thecode2.Grid.SkyBoxWorld;
+import thecode2.Modded.Blocks;
 import thecode2.SkyBox.SkyBox;
+import thecode2.SkyBox.SkyBoxes.Cave;
+import thecode2.SkyBox.SkyBoxes.Desert;
 
 public class GenerationOre extends GenerationObject {
+    private String blockName;
     private Material block;
     private int data=0;
     private int MinVeinSize=5;
@@ -60,10 +64,34 @@ public class GenerationOre extends GenerationObject {
         this.box=box;
     }
 
+    public GenerationOre(int maxY, SkyBox box, String blockName, int MinVeinSize, int MaxVeinSize, int MinVeins, int MaxVeins) {
+        super(0, maxY, 0, box);
+        this.blockName=blockName;
+        this.MinVeinSize=MinVeinSize;
+        this.MaxVeinSize=MaxVeinSize;
+        this.MinVeins=MinVeins;
+        this.MaxVeins=MaxVeins;
+        this.box=box;
+    }
+
+    public GenerationOre(int maxY, SkyBox box, String blockName,int data, int MinVeinSize, int MaxVeinSize, int MinVeins, int MaxVeins) {
+        super(0, maxY, 0, box);
+        this.blockName=blockName;
+        this.MinVeinSize=MinVeinSize;
+        this.MaxVeinSize=MaxVeinSize;
+        this.MinVeins=MinVeins;
+        this.MaxVeins=MaxVeins;
+        this.box=box;
+        this.data=data;
+    }
+
     @Override
     public void generate(GenerationTarget target){
         for(int i=0;i<=(int)(Math.random()*(MaxVeins-MinVeins)+MinVeins);i++) {
-            Generator.Queue(new GenerationOreVein(x+(int)(Math.random()*(SkyBoxWorld.TileSize[0])), y-(int)(Math.random()*y), z+(int)(Math.random()*(SkyBoxWorld.TileSize[1])), (int) (Math.random() * (MaxVeinSize - MinVeinSize) + MinVeinSize), block, data,y,box));
+            if(blockName!=null)
+                Generator.Queue(new GenerationOreVein(x+(int)(Math.random()*(SkyBoxWorld.TileSize[0])), y-(int)(Math.random()*y), z+(int)(Math.random()*(SkyBoxWorld.TileSize[1])), (int) (Math.random() * (MaxVeinSize - MinVeinSize) + MinVeinSize), blockName, data,y,box,y));
+            else
+                Generator.Queue(new GenerationOreVein(x+(int)(Math.random()*(SkyBoxWorld.TileSize[0])), y-(int)(Math.random()*y), z+(int)(Math.random()*(SkyBoxWorld.TileSize[1])), (int) (Math.random() * (MaxVeinSize - MinVeinSize) + MinVeinSize), block, data,y,box,y));
         }
     }
 }
